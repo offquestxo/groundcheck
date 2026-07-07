@@ -1,0 +1,16 @@
+# Python-generated files
+__pycache__/
+*.py[oc]
+build/
+dist/
+wheels/
+*.egg-info
+
+# Virtual environments
+.venv
+
+# groundcheck report store (local dev)
+.groundcheck/
+*.pyc
+.pytest_cache/
+.ruff_cache/
