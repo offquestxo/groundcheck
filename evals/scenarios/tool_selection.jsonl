@@ -1,0 +1,12 @@
+{"id": "ts1", "task_description": "I have a RAG answer and its source chunks. I want a 0-1 faithfulness score and to see every claim's verdict, not just the problems.", "expected_tool": "groundcheck_evaluate_faithfulness"}
+{"id": "ts2", "task_description": "Just show me which parts of this generated answer are made up or contradicted by the sources -- I don't need a full report, just the problems.", "expected_tool": "groundcheck_detect_hallucinations"}
+{"id": "ts3", "task_description": "I retrieved 10 chunks for a query and I have a list of which chunk ids are actually relevant. Compute precision, recall, and NDCG at k=5.", "expected_tool": "groundcheck_evaluate_retrieval"}
+{"id": "ts4", "task_description": "I don't have gold relevant docs for this query, but I want to know how good my retrieval ranking is anyway.", "expected_tool": "groundcheck_evaluate_retrieval"}
+{"id": "ts5", "task_description": "I have two different RAG answers to the same question and I want to know which one is better and why.", "expected_tool": "groundcheck_compare"}
+{"id": "ts6", "task_description": "I want to batch-evaluate 50 question/answer/source triples I have inline and get an aggregate faithfulness score.", "expected_tool": "groundcheck_run_suite"}
+{"id": "ts7", "task_description": "Earlier I ran a full evaluation suite and got back a report id. Now I want to pull up the full details of that report.", "expected_tool": "groundcheck_get_report"}
+{"id": "ts8", "task_description": "Check if this answer hallucinated anything relative to the docs it cited -- I just want the fix-it list.", "expected_tool": "groundcheck_detect_hallucinations"}
+{"id": "ts9", "task_description": "Score how faithful this chatbot's answer is to the knowledge base articles it used, and show me every claim it made.", "expected_tool": "groundcheck_evaluate_faithfulness"}
+{"id": "ts10", "task_description": "My vector search returned these chunks in ranked order with known relevant ids -- how good is the ranking quality at several cutoffs?", "expected_tool": "groundcheck_evaluate_retrieval"}
+{"id": "ts11", "task_description": "A/B test: which of these two prompt templates produces a more complete and relevant answer for this query?", "expected_tool": "groundcheck_compare"}
+{"id": "ts12", "task_description": "I have a dataset of eval cases in a JSONL file on disk -- run the full eval suite over it and give me a summary.", "expected_tool": "groundcheck_run_suite"}
