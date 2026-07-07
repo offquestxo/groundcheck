@@ -22,12 +22,18 @@ class Source(BaseModel):
 
 class ClaimVerdict(BaseModel):
     claim: str = Field(description="An atomic factual claim extracted from the answer.")
+    answer_span: str = Field(description="Verbatim substring of the answer this claim came from.")
     verdict: Verdict
     source_id: str | None = Field(
         default=None, description="Id of the source that supports or contradicts the claim."
     )
     quoted_span: str | None = Field(
-        default=None, description="Exact quoted span from the source backing the verdict."
+        default=None,
+        description=(
+            "Exact quoted span from the source backing the verdict, or the closest "
+            "related passage for unsupported/contradicted claims. Null if sources "
+            "are entirely silent on the topic."
+        ),
     )
     reason: str | None = Field(
         default=None, description="One-line explanation, populated for unsupported/contradicted."
