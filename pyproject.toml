@@ -12,7 +12,6 @@ keywords = ["mcp", "rag", "evaluation", "hallucination-detection", "llm-eval"]
 classifiers = [
     "Development Status :: 3 - Alpha",
     "Intended Audience :: Developers",
-    "License :: OSI Approved :: MIT License",
     "Programming Language :: Python :: 3.11",
     "Programming Language :: Python :: 3.12",
     "Programming Language :: Python :: 3.13",
@@ -22,6 +21,8 @@ dependencies = [
     "mcp[cli]>=1.28.1",
     "pydantic>=2",
     "httpx>=0.28",
+    "starlette>=0.40",
+    "uvicorn>=0.30",
 ]
 
 [project.urls]
@@ -31,6 +32,7 @@ Issues = "https://github.com/offquestxo/groundcheck/issues"
 
 [project.scripts]
 groundcheck = "groundcheck.server:main"
+groundcheck-http = "groundcheck.http:main"
 
 [dependency-groups]
 dev = [

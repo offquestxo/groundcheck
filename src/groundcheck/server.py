@@ -1,9 +1,13 @@
-"""FastMCP app: registers all groundcheck tools/resources/prompts. Stdio entry point."""
+"""FastMCP app: registers all groundcheck tools/resources/prompts. Stdio entry point.
+
+Also used as the shared app for the Streamable HTTP entry (see http.py).
+"""
 
 from __future__ import annotations
 
 import json
 import logging
+import os
 import sys
 
 from mcp.server.fastmcp import Context, FastMCP
@@ -38,6 +42,12 @@ mcp = FastMCP(
         "hallucination detection, and retrieval quality metrics. Judge-backed tools use "
         "MCP sampling (your own model) by default -- no API key needed."
     ),
+    host=os.environ.get("GROUNDCHECK_HTTP_HOST", "127.0.0.1"),
+    port=int(os.environ.get("GROUNDCHECK_HTTP_PORT", "8000")),
+    # Stateless: no reliance on protocol sessions. run_suite returns a report_id,
+    # get_report accepts it -- reports are the only state, and they live on disk.
+    stateless_http=True,
+    json_response=True,
 )
 
 
