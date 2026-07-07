@@ -1,0 +1,21 @@
+{
+  "$schema": "https://static.modelcontextprotocol.io/schemas/2025-12-11/server.schema.json",
+  "name": "io.github.offquestxo/groundcheck",
+  "title": "groundcheck",
+  "description": "Evaluates RAG outputs: faithfulness scoring, hallucination detection, and retrieval quality metrics. Zero API keys via MCP sampling.",
+  "version": "0.1.0",
+  "repository": {
+    "url": "https://github.com/offquestxo/groundcheck",
+    "source": "github"
+  },
+  "packages": [
+    {
+      "registryType": "pypi",
+      "identifier": "groundcheck",
+      "version": "0.1.0",
+      "transport": {
+        "type": "stdio"
+      }
+    }
+  ]
+}
