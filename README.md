@@ -22,6 +22,28 @@ documents say." groundcheck is that test.
      groundcheck_detect_hallucinations catching a planted hallucination,
      and drop it at docs/demo.gif. Placeholder above until then. -->
 
+### Eval dashboard
+
+![groundcheck dashboard](docs/dashboard-screenshot.png)
+
+<!-- TODO: drop a real screenshot of docs/dashboard.html at
+     docs/dashboard-screenshot.png (generate it with
+     `groundcheck-dashboard --out docs/dashboard.html`, open it, screenshot it).
+     Placeholder above until then. -->
+
+`groundcheck-dashboard --out docs/dashboard.html` generates a single
+self-contained HTML file from your report store -- summary cards, a
+faithfulness-by-report chart, a sortable per-case table, and worst-5-cases,
+all with Chart.js loaded from a CDN and the data embedded inline. Opens
+straight from disk, no server required.
+
+Built and verified against real (if synthetic) reports -- see
+[dashboard.py](src/groundcheck/dashboard.py) and its tests. Not yet committed
+here: the plan is to generate it from real [knowledge-assistant](https://github.com/offquestxo/knowledge-assistant)
+eval data once that's unblocked (see that repo's Evaluation section), rather
+than ship a demo file full of made-up numbers. Once that's live, this section
+gets a "see live results" link (GitHub Pages).
+
 ## Quickstart
 
 **Claude Code:**
@@ -124,6 +146,11 @@ to prevent path traversal. Full threat model in [SECURITY.md](SECURITY.md).
 - [ ] MCP Tasks primitive for async `run_suite` on large datasets.
 - [ ] MCP Apps report UI (render a report inline instead of raw JSON).
 - [ ] Publish to PyPI and the MCP Registry (packaging is ready; not yet published).
+- [ ] Live FastAPI dashboard (v2) -- `groundcheck-dashboard`'s static HTML file is
+  the v1 by design (zero deployment burden); a running app with live updates
+  is a reasonable next step once there's a reason to keep one up.
+- [ ] Enable GitHub Pages for `docs/dashboard.html` so there's a live, clickable
+  "see eval results" link with no clone required.
 
 ## Development
 

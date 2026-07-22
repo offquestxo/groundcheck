@@ -33,6 +33,7 @@ Issues = "https://github.com/offquestxo/groundcheck/issues"
 [project.scripts]
 groundcheck = "groundcheck.server:main"
 groundcheck-http = "groundcheck.http:main"
+groundcheck-dashboard = "groundcheck.dashboard:main"
 
 [dependency-groups]
 dev = [

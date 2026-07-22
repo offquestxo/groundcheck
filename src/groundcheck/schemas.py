@@ -107,6 +107,7 @@ class EvalCase(BaseModel):
 
 class CaseResult(BaseModel):
     id: str
+    query: str
     faithfulness: FaithfulnessResult
     retrieval: RetrievalResult | None = None
 

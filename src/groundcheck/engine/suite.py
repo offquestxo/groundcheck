@@ -115,7 +115,9 @@ async def run_suite(
         retrieval = await evaluate_retrieval(
             judge, case.query, case.sources, case.relevant_ids, k_values
         )
-        case_results.append(CaseResult(id=case.id, faithfulness=faithfulness, retrieval=retrieval))
+        case_results.append(
+            CaseResult(id=case.id, query=case.query, faithfulness=faithfulness, retrieval=retrieval)
+        )
 
     mean_faithfulness = (
         sum(r.faithfulness.score for r in case_results) / len(case_results) if case_results else 0.0
