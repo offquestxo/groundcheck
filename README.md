@@ -37,12 +37,11 @@ faithfulness-by-report chart, a sortable per-case table, and worst-5-cases,
 all with Chart.js loaded from a CDN and the data embedded inline. Opens
 straight from disk, no server required.
 
-Built and verified against real (if synthetic) reports -- see
-[dashboard.py](src/groundcheck/dashboard.py) and its tests. Not yet committed
-here: the plan is to generate it from real [knowledge-assistant](https://github.com/offquestxo/knowledge-assistant)
-eval data once that's unblocked (see that repo's Evaluation section), rather
-than ship a demo file full of made-up numbers. Once that's live, this section
-gets a "see live results" link (GitHub Pages).
+[docs/dashboard.html](docs/dashboard.html) in this repo is generated from a
+real report: knowledge-assistant's 18-query eval (see its Evaluation
+section, cross-linked above) -- not synthetic smoke-test numbers. Enable
+GitHub Pages on this repo to get a live, clickable link instead of a
+clone-and-open file (see Roadmap).
 
 ## Quickstart
 
@@ -129,10 +128,14 @@ required on top of what you're already paying your client for.
   hallucination-detection accuracy before and after tuning tool docstrings --
   the actual before/after numbers, not just the final descriptions.
 - **Real RAG app**: [knowledge-assistant](https://github.com/offquestxo/knowledge-assistant)
-  (a multi-tenant document Q&A app) uses groundcheck to score its own answers
-  against real retrieval -- see its
-  [README Evaluation section](https://github.com/offquestxo/knowledge-assistant#evaluation)
-  for the live setup and results.
+  (a multi-tenant document Q&A app) uses groundcheck to score its own
+  real pipeline output -- 18 real queries against a real document, 85% mean
+  faithfulness, 94% mean NDCG@5. The interesting finding wasn't a perfect
+  score: the app never hallucinated a fact, but groundcheck's strict
+  literal-support judge flagged several accurate paraphrases as
+  "unsupported" -- a useful data point about judge strictness, not just
+  app quality. Full breakdown in its
+  [README Evaluation section](https://github.com/offquestxo/knowledge-assistant#evaluation).
 
 ## Security
 

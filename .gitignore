@@ -17,6 +17,3 @@ wheels/
 
 # eval run outputs (regenerate locally; RESULTS.md is the curated artifact)
 evals/raw_*.json
-
-# generated dashboard (regenerate from real report data before committing)
-docs/dashboard.html

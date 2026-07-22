@@ -1,0 +1,231 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>groundcheck dashboard</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<style>
+  :root { color-scheme: light dark; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    max-width: 960px;
+    margin: 2rem auto;
+    padding: 0 1rem;
+    color: #1a1a1a;
+    background: #fff;
+  }
+  @media (prefers-color-scheme: dark) {
+    body { color: #e6e6e6; background: #14161a; }
+    .card { background: #1e2126 !important; border-color: #333 !important; }
+    table { border-color: #333 !important; }
+    th, td { border-color: #333 !important; }
+    th { background: #24272d !important; }
+    tr:hover { background: #24272d !important; }
+  }
+  h1 { font-size: 1.4rem; margin-bottom: 0.25rem; }
+  .subtitle { opacity: 0.7; margin-top: 0; margin-bottom: 1.5rem; font-size: 0.9rem; }
+  .cards {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+    gap: 0.75rem;
+    margin-bottom: 2rem;
+  }
+  .card { border: 1px solid #ddd; border-radius: 8px; padding: 0.9rem 1rem; background: #fafafa; }
+  .card .value { font-size: 1.6rem; font-weight: 600; }
+  .card .label { font-size: 0.8rem; opacity: 0.7; }
+  section { margin-bottom: 2.5rem; }
+  h2 { font-size: 1.1rem; border-bottom: 1px solid #ddd; padding-bottom: 0.4rem; }
+  table { width: 100%; border-collapse: collapse; font-size: 0.9rem; }
+  th, td { text-align: left; padding: 0.5rem 0.6rem; border-bottom: 1px solid #eee; }
+  th { cursor: pointer; user-select: none; background: #f5f5f5; white-space: nowrap; }
+  th:hover { opacity: 0.8; }
+  th.sorted-asc::after { content: " \2191"; }
+  th.sorted-desc::after { content: " \2193"; }
+  tr:hover { background: #f9f9f9; }
+  select { padding: 0.3rem 0.5rem; font-size: 0.9rem; margin-bottom: 0.75rem; }
+  .worst-list { padding-left: 1.2rem; }
+  .worst-list li { margin-bottom: 0.3rem; }
+  footer {
+    opacity: 0.6;
+    font-size: 0.8rem;
+    margin-top: 3rem;
+    border-top: 1px solid #ddd;
+    padding-top: 1rem;
+  }
+  .empty { opacity: 0.6; font-style: italic; }
+</style>
+</head>
+<body>
+
+<h1>groundcheck dashboard</h1>
+<p class="subtitle">Generated from the local report store.
+  No server required -- open this file directly.</p>
+
+<div class="cards" id="summary-cards"></div>
+
+<section>
+  <h2>Faithfulness by report</h2>
+  <canvas id="faithfulness-chart" height="90"></canvas>
+</section>
+
+<section>
+  <h2>Per-case breakdown</h2>
+  <select id="report-select"></select>
+  <table id="case-table">
+    <thead>
+      <tr>
+        <th data-key="query">Query</th>
+        <th data-key="faithfulness_score">Faithfulness</th>
+        <th data-key="unsupported_claims">Unsupported</th>
+        <th data-key="contradicted_claims">Contradicted</th>
+        <th data-key="retrieval_precision_5">Precision@5</th>
+      </tr>
+    </thead>
+    <tbody></tbody>
+  </table>
+</section>
+
+<section>
+  <h2>Worst 5 cases (selected report)</h2>
+  <ul class="worst-list" id="worst-cases"></ul>
+</section>
+
+<footer id="footer"></footer>
+
+<script>
+const DATA = {"generated_reports_count": 1, "total_cases": 18, "mean_faithfulness_overall": 0.8468915343915345, "mean_precision_overall": 0.5268518518518519, "reports": [{"report_id": "8949675b21d3", "created_at": 1784744323.3472571, "prompt_version": "v1", "case_count": 18, "mean_faithfulness": 0.8468915343915345, "mean_ndcg": {"3": 0.9340448621570288, "5": 0.9351176886674081, "10": 0.9351176886674081}, "worst_cases": ["q15", "q08", "q09", "q01", "q17"], "cases": [{"id": "q01", "query": "What is Form 941 used for?", "faithfulness_score": 0.7142857142857143, "unsupported_claims": 2, "contradicted_claims": 0, "retrieval_mode": "llm_graded", "retrieval_precision_5": 0.25}, {"id": "q02", "query": "What quarters does this form cover and when is it due?", "faithfulness_score": 0.875, "unsupported_claims": 1, "contradicted_claims": 0, "retrieval_mode": "llm_graded", "retrieval_precision_5": 0.6666666666666666}, {"id": "q03", "query": "How do I know if I'm a monthly or semiweekly schedule depositor?", "faithfulness_score": 0.875, "unsupported_claims": 1, "contradicted_claims": 0, "retrieval_mode": "llm_graded", "retrieval_precision_5": 0.75}, {"id": "q04", "query": "What is Form 941-V and when do I need to use it?", "faithfulness_score": 0.9285714285714286, "unsupported_claims": 1, "contradicted_claims": 0, "retrieval_mode": "llm_graded", "retrieval_precision_5": 1.0}, {"id": "q05", "query": "Can I let a paid tax preparer discuss this return with the IRS on my behalf?", "faithfulness_score": 1.0, "unsupported_claims": 0, "contradicted_claims": 0, "retrieval_mode": "llm_graded", "retrieval_precision_5": 0.3333333333333333}, {"id": "q06", "query": "What happens if I have a balance due versus an overpayment on this return?", "faithfulness_score": 1.0, "unsupported_claims": 0, "contradicted_claims": 0, "retrieval_mode": "llm_graded", "retrieval_precision_5": 1.0}, {"id": "q07", "query": "What is the qualified small business payroll tax credit for increasing research activities?", "faithfulness_score": 1.0, "unsupported_claims": 0, "contradicted_claims": 0, "retrieval_mode": "llm_graded", "retrieval_precision_5": 0.5}, {"id": "q08", "query": "Do I still need to file if I had no employees this quarter?", "faithfulness_score": 0.625, "unsupported_claims": 3, "contradicted_claims": 0, "retrieval_mode": "llm_graded", "retrieval_precision_5": 0.5}, {"id": "q09", "query": "What is the $100,000 next-day deposit obligation rule?", "faithfulness_score": 0.7, "unsupported_claims": 3, "contradicted_claims": 0, "retrieval_mode": "llm_graded", "retrieval_precision_5": 0.6666666666666666}, {"id": "q10", "query": "Are tips subject to Medicare and Social Security tax?", "faithfulness_score": 1.0, "unsupported_claims": 0, "contradicted_claims": 0, "retrieval_mode": "llm_graded", "retrieval_precision_5": 0.6666666666666666}, {"id": "q11", "query": "What is Section 3121(q) Notice and Demand?", "faithfulness_score": 1.0, "unsupported_claims": 0, "contradicted_claims": 0, "retrieval_mode": "llm_graded", "retrieval_precision_5": 0.3333333333333333}, {"id": "q12", "query": "What's the difference between total taxes before adjustments and after adjustments?", "faithfulness_score": 0.8333333333333334, "unsupported_claims": 2, "contradicted_claims": 0, "retrieval_mode": "llm_graded", "retrieval_precision_5": 0.6666666666666666}, {"id": "q13", "query": "What is our company's EIN?", "faithfulness_score": 1.0, "unsupported_claims": 0, "contradicted_claims": 0, "retrieval_mode": "llm_graded", "retrieval_precision_5": 0.25}, {"id": "q14", "query": "How much did we owe in payroll taxes last quarter?", "faithfulness_score": 0.8, "unsupported_claims": 2, "contradicted_claims": 0, "retrieval_mode": "llm_graded", "retrieval_precision_5": 0.75}, {"id": "q15", "query": "What is the total wages reported on this business's most recent filing?", "faithfulness_score": 0.2857142857142857, "unsupported_claims": 5, "contradicted_claims": 0, "retrieval_mode": "llm_graded", "retrieval_precision_5": 0.4}, {"id": "q16", "query": "Who signed this return and on what date?", "faithfulness_score": 0.8571428571428571, "unsupported_claims": 1, "contradicted_claims": 0, "retrieval_mode": "llm_graded", "retrieval_precision_5": 0.5}, {"id": "q17", "query": "Is this business a restaurant, a dental office, or something else?", "faithfulness_score": 0.75, "unsupported_claims": 2, "contradicted_claims": 0, "retrieval_mode": "llm_graded", "retrieval_precision_5": 0.0}, {"id": "q18", "query": "What was the exact refund amount issued to us this year?", "faithfulness_score": 1.0, "unsupported_claims": 0, "contradicted_claims": 0, "retrieval_mode": "llm_graded", "retrieval_precision_5": 0.25}]}]};
+
+function fmtPct(x) {
+  return x === null || x === undefined ? "-" : (x * 100).toFixed(0) + "%";
+}
+
+function renderSummaryCards() {
+  const cards = [
+    { label: "Total reports", value: DATA.generated_reports_count },
+    { label: "Total cases evaluated", value: DATA.total_cases },
+    { label: "Mean faithfulness (all reports)", value: fmtPct(DATA.mean_faithfulness_overall) },
+    { label: "Mean precision@5 (where available)", value: fmtPct(DATA.mean_precision_overall) },
+  ];
+  const el = document.getElementById("summary-cards");
+  el.innerHTML = cards.map(c =>
+    `<div class="card"><div class="value">${c.value}</div><div class="label">${c.label}</div></div>`
+  ).join("");
+}
+
+function renderFaithfulnessChart() {
+  const ctx = document.getElementById("faithfulness-chart");
+  if (!DATA.reports.length) {
+    const p = document.createElement("p");
+    p.className = "empty";
+    p.textContent = "No reports yet.";
+    ctx.replaceWith(p);
+    return;
+  }
+  new Chart(ctx, {
+    type: "bar",
+    data: {
+      labels: DATA.reports.map(r => r.report_id),
+      datasets: [{
+        label: "Mean faithfulness",
+        data: DATA.reports.map(r => r.mean_faithfulness),
+        backgroundColor: "#5b8def",
+      }],
+    },
+    options: {
+      scales: { y: { beginAtZero: true, max: 1 } },
+      plugins: { legend: { display: false } },
+    },
+  });
+}
+
+let currentSort = { key: null, dir: 1 };
+
+function renderCaseTable(report) {
+  const tbody = document.querySelector("#case-table tbody");
+  if (!report || !report.cases.length) {
+    tbody.innerHTML = '<tr><td colspan="5" class="empty">No cases in this report.</td></tr>';
+    return;
+  }
+  let rows = [...report.cases];
+  if (currentSort.key) {
+    rows.sort((a, b) => {
+      const av = a[currentSort.key], bv = b[currentSort.key];
+      if (av === null || av === undefined) return 1;
+      if (bv === null || bv === undefined) return -1;
+      if (av < bv) return -1 * currentSort.dir;
+      if (av > bv) return 1 * currentSort.dir;
+      return 0;
+    });
+  }
+  tbody.innerHTML = rows.map(c => `
+    <tr>
+      <td>${c.query}</td>
+      <td>${fmtPct(c.faithfulness_score)}</td>
+      <td>${c.unsupported_claims}</td>
+      <td>${c.contradicted_claims}</td>
+      <td>${fmtPct(c.retrieval_precision_5)}</td>
+    </tr>
+  `).join("");
+}
+
+function renderWorstCases(report) {
+  const el = document.getElementById("worst-cases");
+  if (!report || !report.worst_cases.length) {
+    el.innerHTML = '<li class="empty">None recorded.</li>';
+    return;
+  }
+  el.innerHTML = report.worst_cases.map(id => `<li>${id}</li>`).join("");
+}
+
+function renderFooter(report) {
+  const el = document.getElementById("footer");
+  if (!report) { el.textContent = ""; return; }
+  el.textContent =
+    `Selected report ${report.report_id} was judged with prompt version ${report.prompt_version}.`;
+}
+
+function selectReport(reportId) {
+  const report = DATA.reports.find(r => r.report_id === reportId) || null;
+  renderCaseTable(report);
+  renderWorstCases(report);
+  renderFooter(report);
+}
+
+function renderReportSelect() {
+  const select = document.getElementById("report-select");
+  if (!DATA.reports.length) {
+    select.innerHTML = '<option>No reports yet</option>';
+    return;
+  }
+  select.innerHTML = DATA.reports
+    .map(r => `<option value="${r.report_id}">${r.report_id}</option>`)
+    .join("");
+  select.addEventListener("change", () => selectReport(select.value));
+  const latestId = DATA.reports[DATA.reports.length - 1].report_id;
+  select.value = latestId;
+  selectReport(latestId);
+}
+
+document.querySelectorAll("#case-table th[data-key]").forEach(th => {
+  th.addEventListener("click", () => {
+    const key = th.dataset.key;
+    document.querySelectorAll("#case-table th")
+      .forEach(h => h.classList.remove("sorted-asc", "sorted-desc"));
+    if (currentSort.key === key) {
+      currentSort.dir *= -1;
+    } else {
+      currentSort = { key, dir: 1 };
+    }
+    th.classList.add(currentSort.dir === 1 ? "sorted-asc" : "sorted-desc");
+    const select = document.getElementById("report-select");
+    selectReport(select.value);
+  });
+});
+
+renderSummaryCards();
+renderFaithfulnessChart();
+renderReportSelect();
+</script>
+</body>
+</html>
