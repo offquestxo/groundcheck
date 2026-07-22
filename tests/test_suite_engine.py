@@ -136,11 +136,14 @@ class TestRunSuite:
         loaded = load_report(report.report_id)
         assert loaded.report_id == report.report_id
 
-    async def test_no_relevant_ids_skips_retrieval(self):
-        judge = FakeJudge(["[]"])
+    async def test_no_relevant_ids_falls_back_to_llm_graded_retrieval(self):
+        # answer is blank -> decompose_claims short-circuits, no judge call needed
+        # for faithfulness; the one canned response is consumed by grade_relevance.
+        judge = FakeJudge(['[{"id": "s1", "grade": 2}]'])
         cases = [EvalCase(id="case1", query="q", answer="  ", sources=[Source(id="s1", text="x")])]
         report = await run_suite(judge, cases)
-        assert report.cases[0].retrieval is None
+        assert report.cases[0].retrieval is not None
+        assert report.cases[0].retrieval.mode == "llm_graded"
 
     async def test_empty_cases_list(self):
         judge = FakeJudge([])

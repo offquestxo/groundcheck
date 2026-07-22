@@ -195,10 +195,13 @@ async def groundcheck_run_suite(
     dataset_path: str | None = None,
     k_values: list[int] | None = None,
 ) -> SuiteSummary:
-    """Run faithfulness (+ retrieval, where gold labels exist) over a batch of cases.
+    """Run faithfulness + retrieval over a batch of cases.
 
     Use this to evaluate a whole RAG pipeline run rather than one answer at a
-    time. Supply exactly one of `cases` or `dataset_path`.
+    time. Supply exactly one of `cases` or `dataset_path`. Retrieval mode is
+    chosen per case exactly like groundcheck_evaluate_retrieval: gold labels
+    (Mode A, free) when a case has `relevant_ids`, LLM-graded relevance
+    (Mode B, 1 model call) otherwise.
 
     Args:
         cases: inline list of {id, query, answer, sources, relevant_ids?}.
@@ -209,8 +212,9 @@ async def groundcheck_run_suite(
 
     Persists a full report and returns a summary (mean faithfulness, mean
     NDCG, worst 5 cases, report_id). Fetch the full report with
-    groundcheck_get_report(report_id). Cost scales with case count: ~2 model
-    calls per case via your client's sampling.
+    groundcheck_get_report(report_id). Cost scales with case count: ~2-3 model
+    calls per case via your client's sampling (2 for faithfulness, +1 for
+    retrieval when a case has no `relevant_ids`).
     """
     if (cases is None) == (dataset_path is None):
         raise ValueError("Provide exactly one of `cases` or `dataset_path`, not both/neither.")

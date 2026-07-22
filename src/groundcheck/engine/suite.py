@@ -15,7 +15,7 @@ import os
 from pathlib import Path
 
 from groundcheck.engine.claims import evaluate_faithfulness
-from groundcheck.engine.retrieval import evaluate_with_gold_labels
+from groundcheck.engine.retrieval import evaluate_retrieval
 from groundcheck.judge.prompts import PROMPT_VERSION
 from groundcheck.judge.sampler import Judge
 from groundcheck.schemas import CaseResult, EvalCase, Report, SuiteSummary
@@ -104,15 +104,17 @@ def load_report(report_id: str) -> Report:
 async def run_suite(
     judge: Judge, cases: list[EvalCase], k_values: list[int] | None = None
 ) -> Report:
-    """Run faithfulness (+ retrieval, when `relevant_ids` is given) per case,
-    aggregate, persist a report, and return it."""
+    """Run faithfulness + retrieval per case, aggregate, persist a report, and
+    return it. Retrieval uses gold labels (Mode A) when `relevant_ids` is
+    given, and falls back to LLM-graded relevance (Mode B) otherwise --
+    same auto-selection as the standalone groundcheck_evaluate_retrieval tool."""
     k_values = k_values or [3, 5, 10]
     case_results: list[CaseResult] = []
     for case in cases:
         faithfulness = await evaluate_faithfulness(judge, case.answer, case.sources)
-        retrieval = None
-        if case.relevant_ids is not None:
-            retrieval = evaluate_with_gold_labels(case.sources, case.relevant_ids, k_values)
+        retrieval = await evaluate_retrieval(
+            judge, case.query, case.sources, case.relevant_ids, k_values
+        )
         case_results.append(CaseResult(id=case.id, faithfulness=faithfulness, retrieval=retrieval))
 
     mean_faithfulness = (
