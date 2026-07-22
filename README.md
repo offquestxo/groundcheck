@@ -26,11 +26,6 @@ documents say." groundcheck is that test.
 
 ![groundcheck dashboard](docs/dashboard-screenshot.png)
 
-<!-- TODO: drop a real screenshot of docs/dashboard.html at
-     docs/dashboard-screenshot.png (generate it with
-     `groundcheck-dashboard --out docs/dashboard.html`, open it, screenshot it).
-     Placeholder above until then. -->
-
 `groundcheck-dashboard --out docs/dashboard.html` generates a single
 self-contained HTML file from your report store -- summary cards, a
 faithfulness-by-report chart, a sortable per-case table, and worst-5-cases,

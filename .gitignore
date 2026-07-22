@@ -17,3 +17,6 @@ wheels/
 
 # eval run outputs (regenerate locally; RESULTS.md is the curated artifact)
 evals/raw_*.json
+
+# macOS
+.DS_Store
