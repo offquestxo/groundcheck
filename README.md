@@ -101,11 +101,16 @@ required on top of what you're already paying your client for.
   multi-tenant dashboards, RBAC, or dataset versioning at scale, LangSmith or
   Phoenix are the right tool.
 
-## Case study: tuning tool descriptions
+## Case studies
 
-[evals/RESULTS.md](evals/RESULTS.md) tracks tool-selection and
-hallucination-detection accuracy before and after tuning tool docstrings --
-the actual before/after numbers, not just the final descriptions.
+- [evals/RESULTS.md](evals/RESULTS.md) tracks tool-selection and
+  hallucination-detection accuracy before and after tuning tool docstrings --
+  the actual before/after numbers, not just the final descriptions.
+- **Real RAG app**: [knowledge-assistant](https://github.com/offquestxo/knowledge-assistant)
+  (a multi-tenant document Q&A app) uses groundcheck to score its own answers
+  against real retrieval -- see its
+  [README Evaluation section](https://github.com/offquestxo/knowledge-assistant#evaluation)
+  for the live setup and results.
 
 ## Security
 
